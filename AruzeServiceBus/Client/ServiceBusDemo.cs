@@ -8,10 +8,12 @@ namespace AruzeServiceBus.Client
 {
     public class ServiceBusDemo: IServiceBusDemo
     {
+        private EventHandler _eventHandler;
         private ServiceBusClient _client;
-        public ServiceBusDemo(IConfiguration configuration)
+        public ServiceBusDemo(EventHandler eventHandler, IConfiguration configuration)
         {
             _client = new ServiceBusClient(configuration["ServiceBus:ConnectionString"].ToString());
+            _eventHandler = eventHandler;
         }
 
         public async Task<MessageContent> Sender(string MessageContent)
@@ -40,9 +42,14 @@ namespace AruzeServiceBus.Client
             return new MessageContent { Message = MessageContent, Topic = topicName, Status = sendStatus };
         }
 
-        public async Task Receiver()
+        public async Task Receiver(EventArgs arg)
         {
+            _eventHandler += eventHandler(arg);
+        }
 
+        public EventHandler eventHandler(EventArgs arg)
+        {
+            throw new NotImplementedException();
         }
     }
 }
